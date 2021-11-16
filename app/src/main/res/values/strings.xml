@@ -1,0 +1,270 @@
+<resources>
+    <string name="app_name">GetTextDandD</string>
+    <string name="adventure">Да начнётся приключение!</string>
+
+    <string-array name="Locations_TLR">
+        <item>Топи</item>
+        <item>Подземелье</item>
+        <item>Таверна</item>
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Number_of_Players">
+        <item>1 игрок</item>
+        <item>2 игрока</item>
+        <item>3 игрока</item>
+        <item>4 игрока</item>
+        <item>5 игроков</item>
+        <item>6 игроков</item>
+    </string-array>
+
+    <string-array name="Setting">
+        <item>Приключения в Средиземье</item>
+        <item>Fallout</item>
+        <item>Ведьмак</item>
+    </string-array>
+
+    <string-array name="Bioms_TLR">
+        <item>Эребор</item>
+        <item>Пещеры Мориа</item>
+        <item>Шир</item>
+        <item>Гондор</item>
+        <item>Минас Итиль</item>
+        <item>Гундабад</item>
+        <item>Мордор</item>
+    </string-array>
+
+    <string-array name="Erebor">
+        <item>Подземелье</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Moria">
+        <item>Подземелье</item>
+    </string-array>
+
+    <string-array name="Shir">
+        <item>Топи</item>
+        <item>Таверна</item>
+        <item>Город</item>
+        <item>Лес</item>
+    </string-array>
+
+    <string-array name="Gondor">
+        <item>Топи</item>
+        <item>Таверна</item>
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Minas_Itil">
+        <item>Таверна</item>
+        <item>Город</item>
+    </string-array>
+
+    <string-array name="Gyndabad">
+        <item>Подземелье</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Mordor">
+        <item>Топи</item>
+        <item>Подземелье</item>
+        <item>Крепость</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Bioms_TheWitcher">
+        <item>Княжество Туссент</item>
+        <item>Каэр Морхен</item>
+        <item>Велен</item>
+        <item>Острова Скеллиге</item>
+        <item>Белый сад</item>
+        <item>Новиград</item>
+    </string-array>
+
+    <string-array name="Principality_of_Tussent">
+        <item>Топи</item>
+        <item>Корчма</item>
+        <item>Город</item>
+        <item>Лес</item>
+    </string-array>
+
+    <string-array name="Kaer_Morhen">
+        <item>Топи</item>
+        <item>Подземелье</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Velen">
+        <item>Топи</item>
+        <item>Корчма</item>
+        <item>Город</item>
+        <item>Лес</item>
+    </string-array>
+
+    <string-array name="Islands_Skellige">
+        <item>Топи</item>
+        <item>Подземелье</item>
+        <item>Корчма</item>
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="White_Garden">
+        <item>Топи</item>
+        <item>Деревня</item>
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Горы</item>
+    </string-array>
+
+    <string-array name="Novigrad">
+        <item>Подземелье</item>
+        <item>Корчма</item>
+        <item>Город</item>
+    </string-array>
+
+    <string-array name="Bioms_Fallout">
+        <item>Содружество</item>
+        <item>Far Harbor</item>
+        <item>Nuka-World</item>
+        <item>Big Boston</item>
+        <item>Пустошь Мохаве</item>
+        <item>Лагерь Легиона Цезаря</item>
+    </string-array>
+
+    <string-array name="Commonwealth">
+        <item>Топи</item>
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Дорога</item>
+        <item>Городские развалины</item>
+    </string-array>
+
+    <string-array name="Far_Harbor">
+        <item>Топи</item>
+        <item>Город</item>
+        <item>Лес</item>
+    </string-array>
+
+    <string-array name="Nuka_World">
+        <item>Город</item>
+        <item>Лес</item>
+        <item>Дорога</item>
+        <item>Городские развалины</item>
+    </string-array>
+
+    <string-array name="Big_Boston">
+        <item>Город</item>
+        <item>Дорога</item>
+        <item>Городские развалины</item>
+    </string-array>
+
+    <string-array name="Mojave_Wasteland">
+        <item>Дорога</item>
+        <item>Городские развалины</item>
+        <item>Пустошь</item>
+    </string-array>
+
+    <string-array name="Сaesars_legion_camp">
+        <item>Лагерь Цезаря</item>
+    </string-array>
+
+    <string-array name="Forms_of_word_Team">
+        <item>команда</item>
+        <item>группа</item>
+        <item>компания</item>
+        <item>братия</item>
+    </string-array>
+
+    <string-array name="Weather_TLR_TheWitcher">
+        <item>солнце</item>
+        <item>дождь</item>
+        <item>облачно</item>
+        <item>снег</item>
+        <item>туман</item>
+        <item>случайная</item>
+        <item>неизвестная</item>
+    </string-array>
+
+    <string-array name="Weather_Fallout">
+        <item>солнце</item>
+        <item>радиоактивный дождь</item>
+        <item>облачно</item>
+        <item>радиоактивный снег</item>
+        <item>кислотный туман</item>
+        <item>случайная</item>
+        <item>неизвестная</item>
+    </string-array>
+
+    <string-array name="Warning_Forms">
+        <item>, вам нужно поскорее найти укрытие</item>
+        <item>, вам надо укрыться</item>
+        <item>, в скором времени вам понадобится укрытие</item>
+        <item>, вам нельзя долго в нём находится</item>
+    </string-array>
+
+    <string-array name="Warning_Forms_Radiation">
+        <item>, вам нужно поскорее найти укрытие</item>
+        <item>, вам надо укрыться</item>
+        <item>, вы не сможете долго в нём находится</item>
+        <item>, вам нельзя долго в нём находится</item>
+    </string-array>
+
+    <string-array name="Swamp_Enemies_Fallout">
+        <item>детёныш болотника</item>
+        <item>болотник</item>
+        <item>болотник-охотник</item>
+        <item>Матка болотников</item>
+    </string-array>
+    
+    <string name="SuperMutantDescription"> Вы замечаете группу супермутантов,
+        в ближнем бою они очень сильны, ноони глупее людей, поэтому их можно
+        без проблем обхитрить. Главное не подпускать их близко. Я бы не
+        советовал лишний раз вступать с ними в бой"</string>
+
+    <string name="GulsDescription">Вы замечаете кучу мертвецов лежащих на улице.
+        От них исходит лёгкий запах гниения, но он не настолько сильный,
+        каким должен быть. Похоже здесь что-то не так."</string>
+
+    <string name="LegionCaesarsNPC">Вы вышли на главную площадь перед шатром цезаря.
+                Вы можете пойти к Цезарю и обсудить с ним кое-какие вопросы,
+                но вам придётся подождать. Цезарь - очень занятой человек.
+                В ожидании вы можете пополнить припасы в арсенале легиона.</string>
+
+    <string name="DeathClawDescription">Вы чувствуете как дрожит земля. Это может быть
+        только коготь смерти, молитесь о том, чтобы он вас не заметил</string>
+
+    <string name="MoleRatDescription">Внезапно из-под земли вырывается группа кротокрысов.
+                Похоже они проголодались и хотят полакомиться вами.</string>
+
+    <string name="Caravan">Вам встретился караван торговцев. Вы можете пополнить припасы.</string>
+
+    <string name="Wasteland_is_wasteland"> Пустошь от того и пустошь, что тут редко кого встретишь.</string>
+
+    <string name="GnuseDescription">Вы слышите жужжание. Вы разворачиваетесь и видите летящую
+                    навстречу стаю гнусов. Вам не составит проблем расправиться с ними,
+                    но попасть по ним сложно, если вы не удачливы и не точны, то вы потратите
+                    много патронов.</string>
+
+    <string name="CityNPCDescription_Fallout">Вы вышли на главную площадь города, вы видите множество
+                разных торговцев, кто-то торгует экипировкой, кто-то хламом,
+                который может вам понадобится для крафта, а кто-то пищей и водой.
+                Среди всех них ходит группа горожан, кто-то из них ищет помощь,
+                возможно вы можете узнать что ему нужно."</string>
+
+    <string name="CityNPCDescription_TheWitcher">Вы вышли на главную площадь города, вы видите множество
+                разных торговцев, кто-то торгует экипировкой, кто-то хламом,
+                который может вам понадобится для крафта. Справа от входа
+                на площадь стоит доска объявлений, может взглянуть на неё?"</string>
+
+    <string name="Start_SwampSentence">Рядом с собой вы слышите бульканье, вы оглядываетесь по сторонам и видите </string>
+</resources>
