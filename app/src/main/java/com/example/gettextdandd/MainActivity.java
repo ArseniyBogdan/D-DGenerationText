@@ -2,6 +2,7 @@ package com.example.gettextdandd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,8 @@ import com.example.gettextdandd.Settings.TheLordOfTheRings;
 import com.example.gettextdandd.Settings.TheWitcher;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+
+import org.json.JSONException;
 
 import java.util.Objects;
 import java.util.Set;
@@ -73,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_PERSON, "Неизвестный").apply();
             prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_OBJECT, "Неизвестный предмет").apply();
             prefs.edit().putBoolean("firstRun", true).apply();
+        }
+
+        fallout = new Fallout(prefs.getString(LAST_CONFIGURATION_OF_BIOM, ""), prefs.getString(LAST_CONFIGURATION_OF_LOCATION, ""), prefs.getString(LAST_CONFIGURATION_OF_WEATHER, ""));
+
+        try {
+            fallout.GenerateDictionary("word_dict_Stapkovsky.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         ic_settings = findViewById(R.id.ic_settings);
@@ -127,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.cancel();
                 });
         AlertDialog alert = a_builder.create();
+        alert.getWindow().setBackgroundDrawableResource(R.color.background_color_for_main_window);
         alert.setTitle("Параметры генерации текста");
         alert.show();
 

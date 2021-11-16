@@ -81,7 +81,7 @@ public class TheWitcher implements SettingInterface{
             case "Топи": return GenerateSwampNPC();
             case "Город": return res.getString(R.string.CityNPCDescription_TheWitcher);
             case "Лес": return GenerateForestNPC();
-            case "Таверна": return GenerateTavernNPC();
+            case "Корчма": return GenerateTavernNPC();
             case "Подземелье": return GenerateDungeonNPC();
             case "Горы": return GenerateMountainsNPC();
         }

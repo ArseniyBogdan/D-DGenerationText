@@ -1,18 +1,25 @@
 package com.example.gettextdandd.Settings;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.widget.Switch;
 
 import com.example.gettextdandd.MainActivity;
 import com.example.gettextdandd.R;
 import com.example.gettextdandd.ml.SmallThewitcherModel;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Random;
 
 public class Fallout implements SettingInterface{
@@ -376,30 +383,33 @@ public class Fallout implements SettingInterface{
         return GenerateFirstSentence() + GenerateWeatherDescription() + GenerateThirdSentence() + GenerateNPCCharacters();
     }
 
-//    private String loadJSONFromAsset(String filename){
-//        String json = null;
-//        try {
-//            inputStream = MainActivity.getInstance().getAssets().open(filename);
-//            val size = inputStream.available();
-//            val buffer = ByteArray(size);
-//            inputStream.read(buffer);
-//            inputStream.close();
-//            json = String(buffer);
-//        }
-//        catch (ex: IOException) {
-//            ex.printStackTrace()
-//            return null
-//        }
-//        return json;
-//    }
-//
-//    JSONObject jsonObject = JSONObject(loadJSONFromAsset( "word_dict.json" ));
-//    Iterator<String> iterator  = jsonObject.keys();
-//    val data = HashMap< String , Int >()
-//            while ( iterator.hasNext() ) {
-//        val key = iterator.next()
-//        data.put( key , jsonObject.get( key ) as Int )
-//    }
+    private String loadJSONFromAsset(String filename){
+        String json = null;
+        try {
+            InputStream inputStream = MainActivity.getInstance().getAssets().open(filename);
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            inputStream.read(buffer);
+            inputStream.close();
+            json = new String(buffer);
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
 
+    public HashMap<String, Integer> GenerateDictionary(String filename) throws JSONException {
+        JSONObject jsonObject = new JSONObject(Objects.requireNonNull(loadJSONFromAsset(filename)));
+        Iterator<String> iterator  = jsonObject.keys();
+        HashMap data = new HashMap<String, Integer>();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            data.put(key , jsonObject.get(key));
+            Log.d("My_Log" ,key + jsonObject.get(key));
+        }
+        return data;
+    }
 
 }
