@@ -20,7 +20,7 @@ public class TheLordOfTheRings implements SettingInterface{
     @Override
     public String GenerateFirstSentence() {
         Random random = new Random();
-        int i = random.nextInt(5);
+        int i = random.nextInt(4);
 
         String[] forms_of_team = MainActivity.getInstance().getResources().getStringArray(R.array.Forms_of_word_Team);
 
@@ -133,6 +133,11 @@ public class TheLordOfTheRings implements SettingInterface{
     }
 
     public String GenerateTavernNPC(){
+        String TavernNPCDescription = "В таверне вы замечаете множество различных лючностей, " +
+                "начиная от обычных пьяниц, девушек, разносящих горячительные " +
+                "напитки, заканчивая хозяином таверны и странником, сидящем в дальнем углу.";
+        TavernNPCDescription = "";
+        // хозяин таверны, пьяницы, молчаливый странниц,
         return null;
     }
 

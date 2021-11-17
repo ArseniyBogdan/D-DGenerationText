@@ -1,29 +1,52 @@
 package com.example.gettextdandd.Settings;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.util.Log;
 import android.widget.Switch;
 
+import androidx.core.content.res.TypedArrayUtils;
+
 import com.example.gettextdandd.MainActivity;
 import com.example.gettextdandd.R;
-import com.example.gettextdandd.ml.SmallThewitcherModel;
+import com.example.gettextdandd.ml.ModelStapkovsky;
+import com.example.gettextdandd.ml.ModelStapkovskyQant;
+import com.example.gettextdandd.ml.ModelStapkovskyThirdbest;
+import com.example.gettextdandd.ml.SmallThewitcherModelGood;
+import com.example.gettextdandd.ml.SmallThewitcherModelSecondbest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.support.common.ops.DequantizeOp;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
 public class Fallout implements SettingInterface{
     private String location, weather, biom;
+
+    HashMap Dictionary = new HashMap<String, Integer>();
+    HashMap DictionaryDecode = new HashMap<Integer, String>();
+
     Resources res = MainActivity.getInstance().getResources();
 
     public Fallout(String biom, String location, String weather){
@@ -120,38 +143,38 @@ public class Fallout implements SettingInterface{
         SwampSentence += res.getString(R.string.Start_SwampSentence);
 
         if(index <= 40){
-            SwampSentence += "небольшую группу детёнышей болотника." +
+            SwampSentence += " небольшую группу детёнышей болотника." +
                     " Они не представляют вам опасности, но возможно рядом есть их мама, " +
                     "поэтому будьте осторожны.";
         }
         else if(index <= 75 ){
             count = RandomOf4();
             if(count>1){
-                SwampSentence += count + " болотников, они могут донести неприятностей, " +
+                SwampSentence +=" " + count + " болотников, они могут донести неприятностей, " +
                         "это зависит от вашей экипировки.";
             }
             else{
-                SwampSentence += 1 + " болотника, который и не подозревает что вы рядом.";
+                SwampSentence +=" " + 1 + " болотника, который и не подозревает что вы рядом.";
             }
         }
         else if(index <= 95){
             count = RandomOf4()/2;
             if (count == 1){
-                SwampSentence += 1 + " болотника-охотника, кажется он вас заметил," +
+                SwampSentence +=" " + 1 + " болотника-охотника, кажется он вас заметил," +
                         " вы понимаете, что с ним будет трудно тягаться.";
             }
             else{
-                SwampSentence += 2 + " болотников-охотников, один такой может расправится " +
+                SwampSentence +=" " + 2 + " болотников-охотников, один такой может расправится " +
                         "с целым карованом, а на что способны двое таких? Скоро вы узнаете...";
             }
         }
         else{
             count = RandomOf4()/2;
             if(count == 1){
-                SwampSentence += "Мать болотников, она ещё вас не заметила, вам лучше бежать пока не поздно";
+                SwampSentence += " Мать болотников, она ещё вас не заметила, вам лучше бежать пока не поздно";
             }
             else{
-                SwampSentence += "Мать болотников, она вас заметила, похоже вам сейчас не поздоровится";
+                SwampSentence += " Мать болотников, она вас заметила, похоже вам сейчас не поздоровится";
             }
         }
 
@@ -173,14 +196,14 @@ public class Fallout implements SettingInterface{
             ForestSentence += res.getString(R.string.GnuseDescription);
         }
         else if(index<=70){
-            ForestSentence += "Вы слышите низкое жужжание. Где-то вдалеке летит что-то большое. Вскоре вы замечаете";
+            ForestSentence += " Вы слышите низкое жужжание. Где-то вдалеке летит что-то большое. Вскоре вы замечаете";
             count = RandomOf4();
             if(count == 1){
-                ForestSentence += " одного дутня. Лучше расправиться с ними сейчас, " +
+                ForestSentence += " Вы видите одного дутня. Лучше расправиться с ними сейчас, " +
                         "пока он далеко и не заметил вас. Если ужалит, то будет очень больно";
             }
             else{
-                ForestSentence += " группу из " + count + " дутней. Лучше расправиться " +
+                ForestSentence += " Вы видите группу из " + count + " дутней. Лучше расправиться " +
                     "с ними сейчас, пока они далеко и не замтеили вас. Если ужалят, то будет очень больно";
             }
         }
@@ -256,7 +279,7 @@ public class Fallout implements SettingInterface{
                 Raiders_Sentence += "уставшими.";
                 int chance = Random();
                 if(chance <= 10){
-                    Raiders_Sentence+= " большинство из них похожи на новобранцев, " +
+                    Raiders_Sentence+= " Большинство из них похожи на новобранцев, " +
                             "возможно, их можно будет направить на правильную дорогу";
                 }
                 else{
@@ -362,25 +385,113 @@ public class Fallout implements SettingInterface{
 
     @Override
     public String GenerateDescription() {
+        String FirstMessage = "the witcher he was led in by a soldier in a hooded coat the conversation did not yield any significant results the miller was terrified he mumbled and stammered and his scars told the witcher more than he did the striga could open her jaws impressively wide and had extremely sharp";
+//        String FirstMessage = GenerateFirstSentence() + GenerateWeatherDescription() + GenerateThirdSentence();
 
-//        try {
-//            SmallThewitcherModel model = SmallThewitcherModel.newInstance(MainActivity.getInstance());
+        try{
+            GenerateDictionary("word_dict_Stapkovsky.json");
+            try {
+                ModelStapkovskyThirdbest model = ModelStapkovskyThirdbest.newInstance(MainActivity.getInstance());
+
+                for(int i = 0; i<20; i++){
+
+                    ArrayList<Integer> TokenizedSequence = tokenize(FirstMessage, Dictionary);
+
+                    Log.d("My_log", TokenizedSequence.toString());
+
+                    TokenizedSequence = padSequence(TokenizedSequence);
+
+                    Log.d("My_log", TokenizedSequence.toString());
+
+                    float[] floatArray = toFloatArray(TokenizedSequence);
+                    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[floatArray.length * 4]);
+                    for(int j = 0; j< floatArray.length - 1; j++){
+                        byteBuffer.putFloat(floatArray.length-j);
+                    }
+                    // Creates inputs for reference.
+                    TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 10}, DataType.FLOAT32);
+
+
+                    inputFeature0.loadBuffer(byteBuffer);
+
+                    // Runs model inference and gets result.
+                    ModelStapkovskyThirdbest.Outputs outputs = model.process(inputFeature0);
+                    TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+                    int indexOfWord = GetIndexMaxFloatFromArray(outputFeature0.getFloatArray());
+                    String word = String.valueOf(DictionaryDecode.get(indexOfWord));
+
+                    Log.d("My_Log", Arrays.toString(outputFeature0.getFloatArray()));
+                    Log.d("Log_for_output_values", String.valueOf(outputFeature0.getFloatValue(2)));
+                    Log.d("My_Log", String.valueOf(indexOfWord));
+                    Log.d("My_Log", word);
+                    FirstMessage += " " + word;
+
+                }
+                model.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            ArrayList<Integer> TokenizedSequence = tokenize(FirstMessage, Dictionary);
+//            TokenizedSequence = padSequence(TokenizedSequence);
+//            float[] inputs = new float[TokenizedSequence.size()];
+//            for(int i = 0; i < TokenizedSequence.size(); i++){
+//                inputs[i] = TokenizedSequence.get(i).floatValue();
+//            }
 //
-//            // Creates inputs for reference.
-//            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 50}, DataType.FLOAT32);
-//            inputFeature0.loadBuffer(byteBuffer);
+//            Interpreter interpreter = new Interpreter(loadModelFile());
 //
-//            // Runs model inference and gets result.
-//            SmallThewitcherModel.Outputs outputs = model.process(inputFeature0);
-//            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
-//
-//            // Releases model resources if no longer used.
-//            model.close();
-//        } catch (IOException e) {
-//            // TODO Handle the exception
-//        }
+//            Map<Integer, Object> outputs = new HashMap<>();
+//            interpreter.run(inputs , outputs);
+//            Log.d("My_Log", String.valueOf(outputs));
+            return null;
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
 
         return GenerateFirstSentence() + GenerateWeatherDescription() + GenerateThirdSentence() + GenerateNPCCharacters();
+    }
+
+    public int GetIndexMaxFloatFromArray(float[] array){
+        int position = 0;
+        float maxValue = -1;
+
+        for(int i = 0; i < array.length; i++){
+            if(array[i] > maxValue) {
+                maxValue = array[i];
+                position = i;
+            }
+        }
+        return position;
+    }
+
+    private float[] toFloatArray(ArrayList<Integer> data){
+        int i = 0;
+        float[] array = new float[data.size()];
+        for (int f: data){
+            array[i++] = (float) f;
+        }
+        return array;
+    }
+
+    private MappedByteBuffer loadModelFile(){
+        String MODEL_ASSETS_PATH = "model_Stapkovsky.tflite";
+        AssetFileDescriptor assetFileDescriptor;
+        try {
+            assetFileDescriptor = MainActivity.getInstance().getAssets().openFd(MODEL_ASSETS_PATH);
+            FileInputStream fileInputStream = new FileInputStream(assetFileDescriptor.getFileDescriptor());
+            FileChannel fileChannel = fileInputStream.getChannel();
+            long startoffset = assetFileDescriptor.getStartOffset();
+            long declaredLength = assetFileDescriptor.getDeclaredLength();
+            MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, startoffset, declaredLength);
+            return buffer;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String loadJSONFromAsset(String filename){
@@ -400,16 +511,46 @@ public class Fallout implements SettingInterface{
         return json;
     }
 
-    public HashMap<String, Integer> GenerateDictionary(String filename) throws JSONException {
+    public void GenerateDictionary(String filename) throws JSONException {
         JSONObject jsonObject = new JSONObject(Objects.requireNonNull(loadJSONFromAsset(filename)));
         Iterator<String> iterator  = jsonObject.keys();
-        HashMap data = new HashMap<String, Integer>();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            data.put(key , jsonObject.get(key));
-            Log.d("My_Log" ,key + jsonObject.get(key));
+            Dictionary.put(key , jsonObject.get(key));
+            DictionaryDecode.put(jsonObject.get(key), key);
         }
-        return data;
     }
 
+    private ArrayList<Integer> tokenize (String message, HashMap<String, Integer> vocabData){
+        String[] parts  = message.split(" ");
+        ArrayList<Integer> tokenizedMessage = new ArrayList<>();
+        for (String part: parts) {
+            if (!part.trim().equals("")){
+                int index = 0;
+                if (vocabData.get(part) != null) {
+                    index = vocabData.get(part);
+                }
+                tokenizedMessage.add(index);
+            }
+        }
+        return tokenizedMessage;
+    }
+
+    private ArrayList<Integer> padSequence (ArrayList<Integer> sequence){
+        int maxlen = 10;
+        if (sequence.size() > maxlen) {
+            return new ArrayList<>(sequence.subList(sequence.size() - maxlen, sequence.size()));
+        }
+        else if ( sequence.size() < maxlen ) {
+            ArrayList<Integer> array =  new ArrayList<>();
+            for (int i = 0; i < maxlen - sequence.size(); i++){
+                array.add(0);
+            }
+            array.addAll(sequence);
+            return array;
+        }
+        else{
+            return sequence;
+        }
+    }
 }

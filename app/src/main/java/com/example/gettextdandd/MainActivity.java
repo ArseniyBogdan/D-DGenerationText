@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         fallout = new Fallout(prefs.getString(LAST_CONFIGURATION_OF_BIOM, ""), prefs.getString(LAST_CONFIGURATION_OF_LOCATION, ""), prefs.getString(LAST_CONFIGURATION_OF_WEATHER, ""));
 
         try {
-            fallout.GenerateDictionary("word_dict_Stapkovsky.json");
+            fallout.GenerateDictionary("model_Stapkovsky.tflite");
         } catch (JSONException e) {
             e.printStackTrace();
         }
