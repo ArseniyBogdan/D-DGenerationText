@@ -1,7 +1,9 @@
 package com.example.gettextdandd.Settings;
 
 import android.content.res.Resources;
+import android.util.Log;
 
+import com.example.gettextdandd.LSTM_ModelManager;
 import com.example.gettextdandd.MainActivity;
 import com.example.gettextdandd.R;
 
@@ -10,13 +12,22 @@ import java.util.Random;
 public class TheWitcher implements SettingInterface{
     private final String biom;
     private final String location;
+    private final String Key_object;
+    private final String NPC;
+
+    private String NameOfDictionary = "word_dict_Sapkovsky.json";
+
+    private final LSTM_ModelManager lstm_modelManager = new LSTM_ModelManager(NameOfDictionary);
+
     private String weather;
     private final Resources res = MainActivity.getInstance().getResources();
 
-    public TheWitcher(String biom, String location, String weather){
+    public TheWitcher(String biom, String location, String weather, String Key_object, String NPC){
         this.biom = biom;
         this.location = location;
         this.weather = weather;
+        this.Key_object = Key_object;
+        this.NPC = NPC;
     }
 
     public int RandomOf4(){
@@ -39,7 +50,7 @@ public class TheWitcher implements SettingInterface{
         String FirstSentence = "Ваша " + forms_of_team[i] +
                 " пришла на локацию '" + biom + "'. " +
                 " Она двигается по направлению к '" +
-                location + "'. ";
+                location + "', с целью найти " + Key_object  + ".";
 
         return FirstSentence;
     }
@@ -68,6 +79,30 @@ public class TheWitcher implements SettingInterface{
         }
 
         return second_sentence + ".";
+    }
+
+    public String GenerateNPCSentence(){
+        String NPCSentence = "";
+        int count = RandomOf4();
+        switch (count){
+            case 1: NPCSentence+= "Вы натыкаетесь на " + NPC + ", ощутив ваше присутствие" +  NPC + ", оно оживилось."; break;
+            case 2: NPCSentence+= "Пока вы шли, ваш взгляд упал на " + NPC + ", в нём есть что-то особенное, и вы можете это узнать."; break;
+            case 3: NPCSentence+= "Через некоторое время беспамятной ходьбы, впереди себя вы замечаете" + NPC + "."; break;
+            case 4: NPCSentence+= "Вы не заметили как перед вами нечто живое - " + NPC + "."; break;
+        }
+        return NPCSentence;
+    }
+
+    public String GenerateKey_ObjectDescription(){
+        String Key_ObjectSentence = "";
+        int count = RandomOf4();
+        switch (count){
+            case 1: Key_ObjectSentence+= "Вы появились в этом странном месте, с целью найти" + Key_object + "..."; break;
+            case 2: Key_ObjectSentence+= "После пробуждения, вас не покидает мысль, что " + Key_object + " вам нужен."; break;
+            case 3: Key_ObjectSentence+= "Вас послали в этот мир, для того чтобы вы заполучили этот" + Key_object + "."; break;
+            case 4: Key_ObjectSentence+= "После пробуждения вы осознали свою цель, найти" + Key_object + "."; break;
+        }
+        return Key_ObjectSentence;
     }
 
     @Override
@@ -113,7 +148,7 @@ public class TheWitcher implements SettingInterface{
                 SwampSentence += 1 + " гуля, помимо того, что он силён, так он ещё может регенерировать.";
             }
             else{
-                SwampSentence += 2 + " гулей, их будет слонжно одолеть, лучще всего фокусироваться " +
+                SwampSentence += 2 + " гулей, их будет слонжно одолеть, лучше всего фокусироваться " +
                         "на одном, а потом переходить на другого, иначе вы рискуете быть съеденным";
             }
         }
@@ -371,6 +406,13 @@ public class TheWitcher implements SettingInterface{
 
     @Override
     public String GenerateDescription() {
-        return GenerateFirstSentence() + GenerateWeatherDescription() + GenerateThirdSentence() + GenerateNPCCharacters();
+        String FirstMessage = GenerateFirstSentence() + GenerateWeatherDescription() + GenerateThirdSentence() + " You see";
+
+        String DesriptionLocationSentence = lstm_modelManager.GenerateLocationDescriptionForTheWitcher(FirstMessage);
+
+        Log.d("My_log", DesriptionLocationSentence);
+
+        return GenerateKey_ObjectDescription() + GenerateFirstSentence() + GenerateWeatherDescription()
+                + GenerateThirdSentence() + DesriptionLocationSentence + GenerateNPCSentence() + GenerateNPCCharacters();
     }
 }

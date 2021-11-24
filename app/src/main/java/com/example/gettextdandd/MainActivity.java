@@ -2,13 +2,10 @@ package com.example.gettextdandd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,18 +18,15 @@ import android.widget.TextView;
 import com.example.gettextdandd.Settings.Fallout;
 import com.example.gettextdandd.Settings.TheLordOfTheRings;
 import com.example.gettextdandd.Settings.TheWitcher;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.json.JSONException;
-
 import java.util.Objects;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
-    private String[] location_list, weather_list, number_of_players_list, setting_list,
-            bioms_TLR, bioms_TheWitcher, bioms_Fallout;
+    private String[] location_list;
+    private String[] setting_list;
+    private String[] bioms_TLR;
     private TheWitcher theWitcher;
     private TheLordOfTheRings theLordOfTheRings;
     private Fallout fallout;
@@ -43,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String LAST_CONFIGURATION_OF_SETTING = "Last_Setting", LAST_CONFIGURATION_OF_BIOM = "Last_Biom",
             LAST_CONFIGURATION_OF_LOCATION = "Last_Location", LAST_CONFIGURATION_OF_WEATHER = "Last_Weather",
-            LAST_CONFIGURATION_OF_KEY_PERSON = "Last_Key_Person", LAST_CONFIGURATION_OF_KEY_OBJECT = "Last_Key_Object";
+            LAST_CONFIGURATION_OF_NPC = "Last_NPC", LAST_CONFIGURATION_OF_KEY_OBJECT = "Last_Key_Object";
 
     SharedPreferences prefs = null;
 
@@ -60,10 +54,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("pref", MODE_PRIVATE);
 
         bioms_TLR = res.getStringArray(R.array.Bioms_TLR);
-        bioms_TheWitcher = res.getStringArray(R.array.Bioms_TheWitcher);
-        bioms_Fallout = res.getStringArray(R.array.Bioms_Fallout);
 
-        number_of_players_list = res.getStringArray(R.array.Number_of_Players);
         setting_list = res.getStringArray(R.array.Setting);
 
         if(!prefs.getBoolean("firstRun", false)) {
@@ -73,17 +64,9 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putString(LAST_CONFIGURATION_OF_BIOM, bioms_TLR[0]).apply();
             prefs.edit().putString(LAST_CONFIGURATION_OF_LOCATION, Erebor[0]).apply();
             prefs.edit().putString(LAST_CONFIGURATION_OF_WEATHER, "Неизвестная").apply();
-            prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_PERSON, "Неизвестный").apply();
+            prefs.edit().putString(LAST_CONFIGURATION_OF_NPC, "Неизвестный").apply();
             prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_OBJECT, "Неизвестный предмет").apply();
             prefs.edit().putBoolean("firstRun", true).apply();
-        }
-
-        fallout = new Fallout(prefs.getString(LAST_CONFIGURATION_OF_BIOM, ""), prefs.getString(LAST_CONFIGURATION_OF_LOCATION, ""), prefs.getString(LAST_CONFIGURATION_OF_WEATHER, ""));
-
-        try {
-            fallout.GenerateDictionary("model_Stapkovsky.tflite");
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         ic_settings = findViewById(R.id.ic_settings);
@@ -106,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         AutoCompleteTextView location = window_for_creation.findViewById(R.id.Location_spinner);
         AutoCompleteTextView weather = window_for_creation.findViewById(R.id.Weather_spinner);
 
-        TextInputEditText Key_Person = window_for_creation.findViewById(R.id.Key_person_TIE);
+        TextInputEditText NPC = window_for_creation.findViewById(R.id.Key_person_TIE);
         TextInputEditText Key_Object = window_for_creation.findViewById(R.id.Key_object_TIE);
 
         String Setting_Text = prefs.getString(LAST_CONFIGURATION_OF_SETTING, "");
@@ -120,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         biom.setText(prefs.getString(LAST_CONFIGURATION_OF_BIOM, ""));
         location.setText(prefs.getString(LAST_CONFIGURATION_OF_LOCATION, ""));
         weather.setText(prefs.getString(LAST_CONFIGURATION_OF_WEATHER, ""));
-        Key_Person.setText(prefs.getString(LAST_CONFIGURATION_OF_KEY_PERSON, ""));
+        NPC.setText(prefs.getString(LAST_CONFIGURATION_OF_NPC, ""));
         Key_Object.setText(prefs.getString(LAST_CONFIGURATION_OF_KEY_OBJECT, ""));
 
         SwitchAdapters("Last", window_for_creation);
@@ -131,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     prefs.edit().putString(LAST_CONFIGURATION_OF_BIOM, biom.getText().toString()).apply();
                     prefs.edit().putString(LAST_CONFIGURATION_OF_LOCATION, location.getText().toString()).apply();
                     prefs.edit().putString(LAST_CONFIGURATION_OF_WEATHER, weather.getText().toString()).apply();
-                    prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_PERSON, Objects.requireNonNull(Key_Person.getText()).toString()).apply();
+                    prefs.edit().putString(LAST_CONFIGURATION_OF_NPC, Objects.requireNonNull(NPC.getText()).toString()).apply();
                     prefs.edit().putString(LAST_CONFIGURATION_OF_KEY_OBJECT, Objects.requireNonNull(Key_Object.getText()).toString()).apply();
                 })
                 .setNegativeButton("Отменить", (dialog, which) -> {
@@ -207,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 arrayAdapter_weather = new ArrayAdapter(getApplicationContext(),
-                        R.layout.list_item, weather_list4); // каждый раз создаём новые адаптеры, т.к. иначе ломается выпадающий список
+                        R.layout.list_item, weather_list4);
                 arrayAdapter_bioms = new ArrayAdapter(getApplicationContext(),
                         R.layout.list_item, biom_list4);
-                weather.setText(prefs.getString(LAST_CONFIGURATION_OF_WEATHER, "")); // устанавливаем первую отметку, которая находится в буфере
+                weather.setText(prefs.getString(LAST_CONFIGURATION_OF_WEATHER, ""));
 
                 biom_spinner.setAdapter(arrayAdapter_bioms);
                 weather.setAdapter(arrayAdapter_weather);
@@ -223,9 +206,9 @@ public class MainActivity extends AppCompatActivity {
         AutoCompleteTextView location = dialog_window.findViewById(R.id.Location_spinner);
         AutoCompleteTextView weather = dialog_window.findViewById(R.id.Weather_spinner);
 
-        ArrayAdapter arrayAdapter_bioms = new ArrayAdapter(getApplicationContext(), R.layout.list_item, bioms_list); // каждый раз создаём новые адаптеры, т.к. иначе ломается выпадающий список
-        biom.setText(bioms_list[0]); // устанавливаем первую отметку, которая находится в буфере
-        biom.setAdapter(arrayAdapter_bioms); //обновляем адаптер
+        ArrayAdapter arrayAdapter_bioms = new ArrayAdapter(getApplicationContext(), R.layout.list_item, bioms_list);
+        biom.setText(bioms_list[0]);
+        biom.setAdapter(arrayAdapter_bioms);
         setAdapterLocations(biom.getText().toString(), location);
 
         biom.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -235,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter arrayAdapter_weather = new ArrayAdapter(getApplicationContext(), R.layout.list_item, weather_list); // каждый раз создаём новые адаптеры, т.к. иначе ломается выпадающий список
-        weather.setText(weather_list[0]); // устанавливаем первую отметку, которая находится в буфере
-        weather.setAdapter(arrayAdapter_weather); //обновляем адаптер
+        ArrayAdapter arrayAdapter_weather = new ArrayAdapter(getApplicationContext(), R.layout.list_item, weather_list);
+        weather.setText(weather_list[0]);
+        weather.setAdapter(arrayAdapter_weather);
     }
 
     public void setAdapterLocations(String biom, AutoCompleteTextView location){
@@ -276,16 +259,18 @@ public class MainActivity extends AppCompatActivity {
             String biom = prefs.getString(LAST_CONFIGURATION_OF_BIOM, "");
             String location = prefs.getString(LAST_CONFIGURATION_OF_LOCATION, "");
             String weather = prefs.getString(LAST_CONFIGURATION_OF_WEATHER, "");
+            String NPC = prefs.getString(LAST_CONFIGURATION_OF_NPC, "");
+            String Key_Object = prefs.getString(LAST_CONFIGURATION_OF_KEY_OBJECT, "");
 
             switch(Setting){
                 case "Ведьмак":
-                    theWitcher = new TheWitcher(biom, location, weather);
+                    theWitcher = new TheWitcher(biom, location, weather,Key_Object, NPC);
                     location_description_text.setText(theWitcher.GenerateDescription()); break;
                 case "Fallout":
-                    fallout = new Fallout(biom, location, weather);
+                    fallout = new Fallout(biom, location, weather,Key_Object, NPC);
                     location_description_text.setText(fallout.GenerateDescription()); break;
                 case "Приключения в Средиземье":
-                    theLordOfTheRings = new TheLordOfTheRings(biom, location, weather);
+                    theLordOfTheRings = new TheLordOfTheRings(biom, location, weather, Key_Object, NPC);
                     location_description_text.setText(theLordOfTheRings.GenerateDescription()); break;
             }
         }

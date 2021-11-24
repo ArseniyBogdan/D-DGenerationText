@@ -5,6 +5,8 @@ plugins {
 android {
     compileSdk 31
 
+    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "com.example.gettextdandd"
         minSdk 21
@@ -58,4 +60,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly-SNAPSHOT'
     implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'
     implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly-SNAPSHOT'
+
+    implementation 'com.android.support.test:runner:1.0.2'
+    implementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
